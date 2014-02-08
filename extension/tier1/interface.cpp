@@ -88,10 +88,12 @@ void* CreateInterfaceInternal( const char *pName, int *pReturnCode )
 	return NULL;	
 }
 
+#ifdef TIER1_EXPORT_INTERFACE
 void* CreateInterface( const char *pName, int *pReturnCode )
 {
     return CreateInterfaceInternal( pName, pReturnCode );
 }
+#endif
 
 
 
