@@ -31,6 +31,8 @@
 
 #include "extension.h"
 
+#include "steam/steam_gameserver.h"
+
 #include "CDetour/detours.h"
 
 #include "tier1/strtools.h"
@@ -39,6 +41,8 @@
 
 CSteamAPI g_SteamAPI;		/**< Global singleton for extension's main interface */
 SMEXT_LINK( &g_SteamAPI );
+
+CSteamGameServerAPIContext g_APIContext;
 
 
 DETOUR_DECL_STATIC6( SteamGameServer_InitSafeDetour, bool, uint32, unIP, uint16, usSteamPort, uint16, usGamePort, uint16, usQueryPort, EServerMode, eServerMode, const char *, pchVersionString )
@@ -51,6 +55,9 @@ DETOUR_DECL_STATIC6( SteamGameServer_InitSafeDetour, bool, uint32, unIP, uint16,
 
 bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 {
+	extern sp_nativeinfo_t g_Natives[];
+	sharesys->AddNatives( myself, g_Natives );
+
 	CDetourManager::Init( g_pSM->GetScriptingEngine(), NULL );
 
 	extern void *Sys_GetProcAddress( const char *pModuleName, const char *pName );
@@ -80,7 +87,7 @@ void CSteamAPI::SDK_OnUnload()
 
 void CSteamAPI::Init()
 {
-	if ( !m_ApiContext.Init() )
+	if ( !g_APIContext.Init() )
 	{
 		g_pSM->LogError( myself, "Unable to initialize SteamAPI context!" );
 		return;

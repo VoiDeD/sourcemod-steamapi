@@ -51,6 +51,9 @@
     <ClCompile Include="..\tier1\strtools.cpp">
       <Filter>Source Files\tier1</Filter>
     </ClCompile>
+    <ClCompile Include="natives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">

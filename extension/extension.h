@@ -35,10 +35,9 @@
 
 #include "smsdk_ext.h"
 
-#include "steam/steam_gameserver.h"
-
 
 class CDetour;
+class CSteamGameServerAPIContext;
 
 
 class CSteamAPI :
@@ -127,6 +126,7 @@ public:
 
 private:
 	CDetour *m_pInitDetour;
-	CSteamGameServerAPIContext m_ApiContext;
 
 };
+
+extern CSteamGameServerAPIContext g_APIContext;
