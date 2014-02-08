@@ -15,3 +15,6 @@
 # Extension build dirs
 [Dd]ebug*/
 [Rr]ealse*/
+
+# steamapi
+steamapi/

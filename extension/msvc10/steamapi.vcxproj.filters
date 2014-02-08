@@ -16,6 +16,21 @@
     <Filter Include="SourceMod SDK">
       <UniqueIdentifier>{31958233-BB2D-4e41-A8F9-CE8A4684F436}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\CDetour">
+      <UniqueIdentifier>{7c86ca94-69ef-4c0a-ab1f-f80a96dec3f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\asm">
+      <UniqueIdentifier>{52f457c1-3fab-4f77-a0d3-c225deff7015}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\CDetour">
+      <UniqueIdentifier>{5ec84d5b-750f-4ba8-9c70-7af15ca96ff7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\asm">
+      <UniqueIdentifier>{3827d520-09bf-4fe0-ad73-7909b50c361c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\tier1">
+      <UniqueIdentifier>{d21d98d1-016c-4a44-9d78-9ec1b1ac2839}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\extension.cpp">
@@ -23,6 +38,18 @@
     </ClCompile>
     <ClCompile Include="..\sdk\smsdk_ext.cpp">
       <Filter>SourceMod SDK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\CDetour\detours.cpp">
+      <Filter>Source Files\CDetour</Filter>
+    </ClCompile>
+    <ClCompile Include="..\asm\asm.c">
+      <Filter>Source Files\asm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tier1\interface.cpp">
+      <Filter>Source Files\tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tier1\strtools.cpp">
+      <Filter>Source Files\tier1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -34,6 +61,15 @@
     </ClInclude>
     <ClInclude Include="..\sdk\smsdk_ext.h">
       <Filter>SourceMod SDK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CDetour\detourhelpers.h">
+      <Filter>Header Files\CDetour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\CDetour\detours.h">
+      <Filter>Header Files\CDetour</Filter>
+    </ClInclude>
+    <ClInclude Include="..\asm\asm.h">
+      <Filter>Header Files\asm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

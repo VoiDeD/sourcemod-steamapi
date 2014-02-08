@@ -31,17 +31,58 @@
 
 #include "extension.h"
 
+#include "CDetour/detours.h"
+
+#include "tier1/strtools.h"
+#include "tier1/interface.h"
+
 
 CSteamAPI g_SteamAPI;		/**< Global singleton for extension's main interface */
-
 SMEXT_LINK( &g_SteamAPI );
+
+
+DETOUR_DECL_STATIC6( SteamGameServer_InitSafeDetour, bool, uint32, unIP, uint16, usSteamPort, uint16, usGamePort, uint16, usQueryPort, EServerMode, eServerMode, const char *, pchVersionString )
+{
+	g_SteamAPI.Init();
+
+	return DETOUR_STATIC_CALL( SteamGameServer_InitSafeDetour )( unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString );
+}
 
 
 bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 {
+	CDetourManager::Init( g_pSM->GetScriptingEngine(), NULL );
+
+	extern void *Sys_GetProcAddress( const char *pModuleName, const char *pName );
+	void *pFuncInitSafe = Sys_GetProcAddress( "steam_api", "SteamGameServer_InitSafe" );
+
+	if ( pFuncInitSafe == NULL )
+	{
+		// the world is probably ending
+		V_snprintf( error, maxlength, "Unable to find SteamGameServer_InitSafe" );
+		return false;
+	}
+
+	m_pInitDetour = DETOUR_CREATE_STATIC_FIXED( SteamGameServer_InitSafeDetour, pFuncInitSafe );
+	m_pInitDetour->EnableDetour();
+
 	return true;
 }
 
 void CSteamAPI::SDK_OnUnload()
 {
+	if ( m_pInitDetour != NULL )
+	{
+		m_pInitDetour->Destroy();
+		m_pInitDetour = NULL;
+	}
+}
+
+void CSteamAPI::Init()
+{
+	if ( !m_ApiContext.Init() )
+	{
+		g_pSM->LogError( myself, "Unable to initialize SteamAPI context!" );
+		return;
+	}
 }

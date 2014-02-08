@@ -32,12 +32,25 @@
 
 #pragma once
 
+
 #include "smsdk_ext.h"
+
+#include "steam/steam_gameserver.h"
+
+
+class CDetour;
 
 
 class CSteamAPI :
 	public SDKExtension
 {
+
+public:
+	CSteamAPI() :
+		m_pInitDetour( NULL )
+	{
+	}
+
 
 public:
 	/**
@@ -107,5 +120,13 @@ public:
 	 */
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
 #endif
+
+public:
+	void Init();
+
+
+private:
+	CDetour *m_pInitDetour;
+	CSteamGameServerAPIContext m_ApiContext;
 
 };

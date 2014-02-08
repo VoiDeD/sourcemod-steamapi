@@ -616,8 +616,8 @@
     <ClCompile>
       <AdditionalOptions>/D SE_EPISODEONE=1 /D SE_DARKMESSIAH=2 /D SE_ORANGEBOX=3 /D SE_BLOODYGOODTIME=4 /D SE_EYE=5 /D SE_ORANGEBOXVALVE=6 /D SE_LEFT4DEAD=7 /D SE_LEFT4DEAD2=8 /D SE_ALIENSWARM=9</AdditionalOptions>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SOURCEMOD15)\public;$(SOURCEMOD15)\public\sourcepawn;..\sdk;..;$(HL2SDKOBVALVE)\public;$(HL2SDKOBVALVE)\public\engine;$(HL2SDKOBVALVE)\game\server;$(HL2SDKOBVALVE)\game\shared;$(HL2SDKOBVALVE)\public\game\server;$(HL2SDKOBVALVE)\public\tier0;$(HL2SDKOBVALVE)\public\tier1;$(MMSOURCE110)\core;$(MMSOURCE110)\core\sourcehook;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;SOURCE_ENGINE=6;GAME_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(MMSOURCE110)\core;$(MMSOURCE110)\core\sourcehook;$(SOURCEMOD15)\public;$(SOURCEMOD15)\public\sourcepawn;..;..\sdk;..\steamapi\public;$(HL2SDK2013)\public;$(HL2SDK2013)\public\engine;$(HL2SDK2013)\game\server;$(HL2SDK2013)\game\shared;$(HL2SDK2013)\public\game\server;$(HL2SDK2013)\public\tier0;$(HL2SDK2013)\public\tier1;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;SDK_EXPORTS;_CRT_SECURE_NO_DEPRECATE;SOURCEMOD_BUILD;SOURCE_ENGINE=6;GAME_DLL;VERSION_SAFE_STEAM_API_INTERFACES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -629,7 +629,7 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(HL2SDKOBVALVE)\lib\public\tier0.lib;$(HL2SDKOBVALVE)\lib\public\tier1.lib;$(HL2SDKOBVALVE)\lib\public\vstdlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(HL2SDK2013)\lib\public\tier0.lib;$(HL2SDK2013)\lib\public\vstdlib.lib;..\steamapi\redistributable_bin\steam_api.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBC;LIBCD;LIBCMT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
@@ -992,10 +992,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\asm\asm.c" />
+    <ClCompile Include="..\CDetour\detours.cpp" />
     <ClCompile Include="..\extension.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
+    <ClCompile Include="..\tier1\interface.cpp" />
+    <ClCompile Include="..\tier1\strtools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\asm\asm.h" />
+    <ClInclude Include="..\CDetour\detourhelpers.h" />
+    <ClInclude Include="..\CDetour\detours.h" />
     <ClInclude Include="..\extension.h" />
     <ClInclude Include="..\sdk\smsdk_config.h" />
     <ClInclude Include="..\sdk\smsdk_ext.h" />
