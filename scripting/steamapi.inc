@@ -8,6 +8,8 @@
 
 native SteamAPI_SetGameDescription( const String:gameDesc[] );
 
+forward SteamAPI_RestartRequested();
+
 
 public Extension:__ext__steamapi =
 {

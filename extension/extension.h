@@ -46,7 +46,8 @@ class CSteamAPI :
 
 public:
 	CSteamAPI() :
-		m_pInitDetour( NULL )
+		m_pInitDetour( NULL ),
+		m_pShutdownDetour( NULL )
 	{
 	}
 
@@ -120,12 +121,22 @@ public:
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
 #endif
 
+
 public:
 	void Init();
+	void Shutdown();
+
+
+private:
+	void InitForwards();
+	void ShutdownForwards();
+
+	bool WasRestartRequested();
 
 
 private:
 	CDetour *m_pInitDetour;
+	CDetour *m_pShutdownDetour;
 
 };
 

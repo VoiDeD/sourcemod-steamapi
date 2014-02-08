@@ -54,6 +54,9 @@
     <ClCompile Include="natives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="forwards.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\extension.h">

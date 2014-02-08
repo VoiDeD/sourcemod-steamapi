@@ -52,6 +52,13 @@ DETOUR_DECL_STATIC6( SteamGameServer_InitSafeDetour, bool, uint32, unIP, uint16,
 	return DETOUR_STATIC_CALL( SteamGameServer_InitSafeDetour )( unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString );
 }
 
+DETOUR_DECL_STATIC0( SteamGameServer_ShutdownDetour, void )
+{
+	g_SteamAPI.Shutdown();
+
+	return DETOUR_STATIC_CALL( SteamGameServer_ShutdownDetour )();
+}
+
 
 bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 {
@@ -61,17 +68,18 @@ bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 	CDetourManager::Init( g_pSM->GetScriptingEngine(), NULL );
 
 	extern void *Sys_GetProcAddress( const char *pModuleName, const char *pName );
-	void *pFuncInitSafe = Sys_GetProcAddress( "steam_api", "SteamGameServer_InitSafe" );
 
-	if ( pFuncInitSafe == NULL )
-	{
-		// the world is probably ending
-		V_snprintf( error, maxlength, "Unable to find SteamGameServer_InitSafe" );
-		return false;
-	}
+	void *pFuncInitSafe = Sys_GetProcAddress( "steam_api", "SteamGameServer_InitSafe" );
+	AssertMsg( pFuncInitSafe, "Unable to find SteamGameServer_InitSafe" );
+
+	void *pFuncShutdown = Sys_GetProcAddress( "steam_api", "SteamGameServer_Shutdown" );
+	AssertMsg( pFuncShutdown, "Unable to find SteamGameServer_Shutdown" );
 
 	m_pInitDetour = DETOUR_CREATE_STATIC_FIXED( SteamGameServer_InitSafeDetour, pFuncInitSafe );
 	m_pInitDetour->EnableDetour();
+
+	m_pShutdownDetour = DETOUR_CREATE_STATIC_FIXED( SteamGameServer_ShutdownDetour, pFuncShutdown );
+	m_pShutdownDetour->EnableDetour();
 
 	return true;
 }
@@ -83,6 +91,22 @@ void CSteamAPI::SDK_OnUnload()
 		m_pInitDetour->Destroy();
 		m_pInitDetour = NULL;
 	}
+
+	if ( m_pShutdownDetour != NULL )
+	{
+		m_pShutdownDetour->Destroy();
+		m_pShutdownDetour = NULL;
+	}
+}
+
+bool CSteamAPI::SDK_OnMetamodLoad( ISmmAPI *ismm, char *error, size_t maxlength, bool late )
+{
+	return true;
+}
+
+bool CSteamAPI::SDK_OnMetamodUnload( char *error, size_t maxlength )
+{
+	return true;
 }
 
 void CSteamAPI::Init()
@@ -92,4 +116,13 @@ void CSteamAPI::Init()
 		g_pSM->LogError( myself, "Unable to initialize SteamAPI context!" );
 		return;
 	}
+
+	this->InitForwards();
+}
+
+void CSteamAPI::Shutdown()
+{
+	this->ShutdownForwards();
+
+	g_APIContext.Clear();
 }
