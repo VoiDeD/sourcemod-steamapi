@@ -997,6 +997,7 @@
     <ClCompile Include="..\extension.cpp" />
     <ClCompile Include="..\forwards.cpp" />
     <ClCompile Include="..\natives.cpp" />
+    <ClCompile Include="..\http.cpp" />
     <ClCompile Include="..\sdk\smsdk_ext.cpp" />
     <ClCompile Include="..\tier1\interface.cpp" />
     <ClCompile Include="..\tier1\strtools.cpp" />

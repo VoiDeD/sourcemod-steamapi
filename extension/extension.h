@@ -41,13 +41,15 @@ class CSteamGameServerAPIContext;
 
 
 class CSteamAPI :
-	public SDKExtension
+	public SDKExtension,
+	public IHandleTypeDispatch
 {
 
 public:
 	CSteamAPI() :
 		m_pInitDetour( NULL ),
-		m_pShutdownDetour( NULL )
+		m_pShutdownDetour( NULL ),
+		m_RequestHandleType( 0 )
 	{
 	}
 
@@ -121,13 +123,28 @@ public:
 	//virtual bool SDK_OnMetamodPauseChange(bool paused, char *error, size_t maxlength);
 #endif
 
+public: // IHandleTypeDispatch
+
+	/**
+	 * @brief Called when destroying a handle.  Must be implemented.
+	 *
+	 * @param type		Handle type.
+	 * @param object	Handle internal object.
+	 */
+	virtual void OnHandleDestroy( HandleType_t type, void *object );
+
 
 public:
 	void Init();
 	void Shutdown();
 
+	HandleType_t GetHttpHandleType() { return m_RequestHandleType; }
+
 
 private:
+	bool InitHttp();
+	void ShutdownHttp();
+
 	void InitForwards();
 	void ShutdownForwards();
 
@@ -138,6 +155,10 @@ private:
 	CDetour *m_pInitDetour;
 	CDetour *m_pShutdownDetour;
 
+	HandleType_t m_RequestHandleType;
+
 };
+
+extern CSteamAPI g_SteamAPI;
 
 extern CSteamGameServerAPIContext g_APIContext;

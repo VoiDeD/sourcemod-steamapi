@@ -68,6 +68,12 @@ bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 	extern sp_nativeinfo_t g_Natives[];
 	sharesys->AddNatives( myself, g_Natives );
 
+	if ( !this->InitHttp() )
+	{
+		V_snprintf( error, maxlength, "Unable to initialize SteamAPI Http" );
+		return false;
+	}
+
 	CDetourManager::Init( g_pSM->GetScriptingEngine(), NULL );
 
 	extern void *Sys_GetProcAddress( const char *pModuleName, const char *pName );
@@ -89,6 +95,8 @@ bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 
 void CSteamAPI::SDK_OnUnload()
 {
+	this->ShutdownHttp();
+
 	if ( m_pInitDetour != NULL )
 	{
 		m_pInitDetour->Destroy();
