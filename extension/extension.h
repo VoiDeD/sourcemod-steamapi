@@ -49,7 +49,8 @@ public:
 	CSteamAPI() :
 		m_pInitDetour( NULL ),
 		m_pShutdownDetour( NULL ),
-		m_RequestHandleType( 0 )
+		m_RequestHandleType( 0 ),
+		m_bInitialized( false )
 	{
 	}
 
@@ -152,6 +153,8 @@ private:
 
 
 private:
+	bool m_bInitialized;
+
 	CDetour *m_pInitDetour;
 	CDetour *m_pShutdownDetour;
 

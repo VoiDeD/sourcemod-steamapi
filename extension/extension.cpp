@@ -90,6 +90,12 @@ bool CSteamAPI::SDK_OnLoad( char *error, size_t maxlength, bool late )
 	m_pShutdownDetour = DETOUR_CREATE_STATIC_FIXED( SteamGameServer_ShutdownDetour, pFuncShutdown );
 	m_pShutdownDetour->EnableDetour();
 
+	if ( late )
+	{
+		// if we're lateloading, try to init right away
+		this->Init();
+	}
+
 	return true;
 }
 
@@ -122,6 +128,9 @@ bool CSteamAPI::SDK_OnMetamodUnload( char *error, size_t maxlength )
 
 void CSteamAPI::Init()
 {
+	if ( m_bInitialized )
+		return;
+
 	if ( !g_APIContext.Init() )
 	{
 		g_pSM->LogError( myself, "Unable to initialize SteamAPI context!" );
@@ -129,11 +138,18 @@ void CSteamAPI::Init()
 	}
 
 	this->InitForwards();
+
+	m_bInitialized = true;
 }
 
 void CSteamAPI::Shutdown()
 {
+	if ( !m_bInitialized )
+		return;
+
 	this->ShutdownForwards();
 
 	g_APIContext.Clear();
+
+	m_bInitialized = false;
 }
