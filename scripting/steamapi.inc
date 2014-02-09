@@ -131,4 +131,11 @@ public Extension:__ext__steamapi =
 public __ext_steamapi_SetNTVOptional()
 {
 	MarkNativeAsOptional( "SteamAPI_SetGameDescription" );
+
+	MarkNativeAsOptional( "SteamAPI_CreateHttpRequest" );
+	MarkNativeAsOptional( "SteamAPI_SendHttpRequest" );
+
+	MarkNativeAsOptional( "SteamAPI_GetHttpResponseBodySize" );
+	MarkNativeAsOptional( "SteamAPI_GetHttpResponseBody" );
+
 }
