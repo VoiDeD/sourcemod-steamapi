@@ -11,9 +11,13 @@ public:
 	CHttpRequest( const char *szUrl, EHTTPMethod eMethod, IPluginContext *pContext );
 	~CHttpRequest();
 
+	static CHttpRequest *GetRequestFromHandle( IPluginContext *pContext, cell_t handle );
+
 public:
-	bool Send( IPluginFunction *pCallbackFunc );
 	bool IsValid();
+
+	bool SetContext( uint32 uiContextVal );
+	bool Send( IPluginFunction *pCallbackFunc );
 
 	Handle_t GetPluginHandle() { return m_PluginHandle; }
 
@@ -63,6 +67,22 @@ CHttpRequest::~CHttpRequest()
 	}
 }
 
+CHttpRequest *CHttpRequest::GetRequestFromHandle( IPluginContext *pContext, cell_t handle )
+{
+	HandleSecurity handleSec( pContext->GetIdentity(), myself->GetIdentity() );
+
+	CHttpRequest *pReq = NULL;
+	HandleError error = handlesys->ReadHandle( handle, g_SteamAPI.GetHttpHandleType(), &handleSec, (void **)&pReq );
+
+	if ( error != HandleError_None )
+	{
+		pContext->ThrowNativeError( "Invalid HTTP request handle %x (error %d)", handle, error );
+		return NULL;
+	}
+
+	return pReq;
+}
+
 bool CHttpRequest::Send( IPluginFunction *pCallbackFunc )
 {
 	Assert( IsValid() );
@@ -80,6 +100,12 @@ bool CHttpRequest::Send( IPluginFunction *pCallbackFunc )
 	return bRet;
 }
 
+bool CHttpRequest::SetContext( uint32 contextVal )
+{
+	Assert( IsValid() );
+
+	return g_APIContext.SteamHTTP()->SetHTTPRequestContextValue( m_ReqHandle, contextVal );
+}
 
 bool CHttpRequest::IsValid()
 {
@@ -104,6 +130,7 @@ void CHttpRequest::OnHttpRequestCompleted( HTTPRequestCompleted_t *pResult, bool
 	m_pPluginCallback->PushCell( m_PluginHandle );
 	m_pPluginCallback->PushCell( pResult->m_bRequestSuccessful );
 	m_pPluginCallback->PushCell( pResult->m_eStatusCode );
+	m_pPluginCallback->PushCell( pResult->m_ulContextValue );
 
 	m_pPluginCallback->Execute( NULL );
 }
@@ -161,6 +188,8 @@ static cell_t Native_CreateHttpRequest( IPluginContext *pContext, const cell_t *
 		return BAD_HANDLE;
 	}
 
+	pReq->SetContext( params[ 3 ] );
+
 	return pReq->GetPluginHandle();
 }
 
@@ -171,15 +200,10 @@ static cell_t Native_SendHttpRequest( IPluginContext *pContext, const cell_t *pa
 	if ( !pHttp )
 		return pContext->ThrowNativeError( "SteamAPI not initialized!" );
 
-	HandleSecurity handleSec( pContext->GetIdentity(), myself->GetIdentity() );
+	CHttpRequest *pReq = CHttpRequest::GetRequestFromHandle( pContext, params[ 1 ] );
 
-	CHttpRequest *pReq = NULL;
-	HandleError error = handlesys->ReadHandle( params[ 1 ], g_SteamAPI.GetHttpHandleType(), &handleSec, (void **)&pReq );
-
-	if ( error != HandleError_None )
-	{
-		return pContext->ThrowNativeError( "Invalid HTTP request handle %x (error %d)", params[ 1 ], error );
-	}
+	if ( pReq == NULL )
+		return 0;
 
 	IPluginFunction *pCallbackFunc = pContext->GetFunctionById( params[ 2 ] );
 

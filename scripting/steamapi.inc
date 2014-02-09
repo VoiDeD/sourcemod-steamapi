@@ -72,9 +72,14 @@ enum HTTPStatusCode
 
 native SteamAPI_SetGameDescription( const String:gameDesc[] );
 
-functag HttpReqCompletedCallback public( Handle:httpRequest, bool:bRequestSuccessful, HTTPStatusCode:statusCode );
 
-native Handle:SteamAPI_CreateHttpRequest( const String:url[], HTTPMethod:method = HTTPMethod_GET );
+funcenum HttpReqCompletedCallback
+{
+	public( Handle:httpRequest, bool:bRequestSuccessful, HTTPStatusCode:statusCode ),
+	public( Handle:httpRequest, bool:bRequestSuccessful, HTTPStatusCode:statusCode, any:context ),
+};
+
+native Handle:SteamAPI_CreateHttpRequest( const String:url[], HTTPMethod:method = HTTPMethod_GET, any:context = 0 );
 native bool:SteamAPI_SendHttpRequest( Handle:httpRequest, HttpReqCompletedCallback:callback );
 
 forward SteamAPI_RestartRequested();
