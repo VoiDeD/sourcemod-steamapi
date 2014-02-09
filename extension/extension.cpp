@@ -47,9 +47,12 @@ CSteamGameServerAPIContext g_APIContext;
 
 DETOUR_DECL_STATIC6( SteamGameServer_InitSafeDetour, bool, uint32, unIP, uint16, usSteamPort, uint16, usGamePort, uint16, usQueryPort, EServerMode, eServerMode, const char *, pchVersionString )
 {
+	bool bRet = DETOUR_STATIC_CALL( SteamGameServer_InitSafeDetour )( unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString );
+
+	// we initialize regardless of the init result, because we handle if our context doesn't initialize
 	g_SteamAPI.Init();
 
-	return DETOUR_STATIC_CALL( SteamGameServer_InitSafeDetour )( unIP, usSteamPort, usGamePort, usQueryPort, eServerMode, pchVersionString );
+	return bRet;
 }
 
 DETOUR_DECL_STATIC0( SteamGameServer_ShutdownDetour, void )
