@@ -87,6 +87,25 @@ native SteamAPI_GetHttpResponseBody( Handle:httpRequest, String:buffer[], maxBuf
 
 forward SteamAPI_RestartRequested();
 
+forward SteamAPI_OnClientValidated( accountId, ownerId );
+
+
+stock SteamAPI_GetClientByAccountID( accountId, bool:validate = true )
+{
+	for ( new i = 1 ; i <= MaxClients ; ++i )
+	{
+		if ( !IsClientConnected( i ) )
+			continue;
+
+		new clientAccId = GetSteamAccountID( i, validate );
+
+		if ( accountId == clientAccId )
+			return i;
+	}
+
+	return -1;
+}
+
 
 public Extension:__ext__steamapi =
 {

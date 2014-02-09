@@ -35,6 +35,8 @@
 
 #include "smsdk_ext.h"
 
+#include "steam/steam_gameserver.h"
+
 
 class CDetour;
 class CSteamGameServerAPIContext;
@@ -50,7 +52,8 @@ public:
 		m_pInitDetour( NULL ),
 		m_pShutdownDetour( NULL ),
 		m_RequestHandleType( 0 ),
-		m_bInitialized( false )
+		m_bInitialized( false ),
+		m_CallbackClientValidated( this, &CSteamAPI::OnClientValidated )
 	{
 	}
 
@@ -159,6 +162,8 @@ private:
 	CDetour *m_pShutdownDetour;
 
 	HandleType_t m_RequestHandleType;
+
+	STEAM_GAMESERVER_CALLBACK( CSteamAPI, OnClientValidated, ValidateAuthTicketResponse_t, m_CallbackClientValidated );
 
 };
 
