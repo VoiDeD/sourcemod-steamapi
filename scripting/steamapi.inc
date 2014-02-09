@@ -72,6 +72,8 @@ enum HTTPStatusCode
 
 native SteamAPI_SetGameDescription( const String:gameDesc[] );
 
+native SteamAPI_GetClientSteamID( client, String:buffer[], maxBuffer );
+
 
 funcenum HttpReqCompletedCallback
 {
@@ -131,6 +133,7 @@ public Extension:__ext__steamapi =
 public __ext_steamapi_SetNTVOptional()
 {
 	MarkNativeAsOptional( "SteamAPI_SetGameDescription" );
+	MarkNativeAsOptional( "SteamAPI_GetClientSteamID" );
 
 	MarkNativeAsOptional( "SteamAPI_CreateHttpRequest" );
 	MarkNativeAsOptional( "SteamAPI_SendHttpRequest" );
