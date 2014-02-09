@@ -114,6 +114,8 @@ void CSteamAPI::SDK_OnUnload()
 		m_pShutdownDetour->Destroy();
 		m_pShutdownDetour = NULL;
 	}
+
+	this->Shutdown();
 }
 
 bool CSteamAPI::SDK_OnMetamodLoad( ISmmAPI *ismm, char *error, size_t maxlength, bool late )
