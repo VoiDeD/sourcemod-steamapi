@@ -19,6 +19,10 @@ public:
 	bool SetContext( uint32 uiContextVal );
 	bool Send( IPluginFunction *pCallbackFunc );
 
+	bool GetResponseBodySize( uint32 *bodySize );
+	bool GetResponseBody( uint8 *pBuffer, uint32 maxBuffer );
+
+
 	Handle_t GetPluginHandle() { return m_PluginHandle; }
 
 
@@ -36,6 +40,7 @@ private:
 
 
 CHttpRequest::CHttpRequest( const char *szUrl, EHTTPMethod eMethod, IPluginContext *pContext )
+	: m_pPluginCallback( NULL )
 {
 	m_CallResult.SetGameserverFlag();
 
@@ -83,6 +88,18 @@ CHttpRequest *CHttpRequest::GetRequestFromHandle( IPluginContext *pContext, cell
 	return pReq;
 }
 
+
+bool CHttpRequest::IsValid()
+{
+	if ( m_ReqHandle == INVALID_HTTPREQUEST_HANDLE )
+		return false;
+
+	if ( m_PluginHandle == BAD_HANDLE )
+		return false;
+
+	return true;
+}
+
 bool CHttpRequest::Send( IPluginFunction *pCallbackFunc )
 {
 	Assert( IsValid() );
@@ -107,16 +124,20 @@ bool CHttpRequest::SetContext( uint32 contextVal )
 	return g_APIContext.SteamHTTP()->SetHTTPRequestContextValue( m_ReqHandle, contextVal );
 }
 
-bool CHttpRequest::IsValid()
+bool CHttpRequest::GetResponseBodySize( uint32 *bodySize )
 {
-	if ( m_ReqHandle == INVALID_HTTPREQUEST_HANDLE )
-		return false;
+	Assert( IsValid() );
 
-	if ( m_PluginHandle == BAD_HANDLE )
-		return false;
-
-	return true;
+	return g_APIContext.SteamHTTP()->GetHTTPResponseBodySize( m_ReqHandle, bodySize );
 }
+
+bool CHttpRequest::GetResponseBody( uint8 *buffer, uint32 maxBuffer )
+{
+	Assert( IsValid() );
+
+	return g_APIContext.SteamHTTP()->GetHTTPResponseBodyData( m_ReqHandle, buffer, maxBuffer );
+}
+
 
 void CHttpRequest::OnHttpRequestCompleted( HTTPRequestCompleted_t *pResult, bool bError )
 {
@@ -210,10 +231,55 @@ static cell_t Native_SendHttpRequest( IPluginContext *pContext, const cell_t *pa
 	return pReq->Send( pCallbackFunc );
 }
 
+static cell_t Native_GetHttpResponseBodySize( IPluginContext *pContext, const cell_t *params )
+{
+	ISteamHTTP *pHttp = g_APIContext.SteamHTTP();
+
+	if ( !pHttp )
+		return pContext->ThrowNativeError( "SteamAPI not initialized!" );
+
+	CHttpRequest *pReq = CHttpRequest::GetRequestFromHandle( pContext, params[ 1 ] );
+
+	if ( pReq == NULL )
+		return 0;
+
+	uint32 bodySize;
+
+	if ( !pReq->GetResponseBodySize( &bodySize ) )
+		return pContext->ThrowNativeError( "Unable to get HTTP response body size" );
+
+	return bodySize;
+}
+
+static cell_t Native_GetHttpResponseBody( IPluginContext *pContext, const cell_t *params )
+{
+	ISteamHTTP *pHttp = g_APIContext.SteamHTTP();
+
+	if ( !pHttp )
+		return pContext->ThrowNativeError( "SteamAPI not initialized!" );
+
+	CHttpRequest *pReq = CHttpRequest::GetRequestFromHandle( pContext, params[ 1 ] );
+
+	if ( pReq == NULL )
+		return 0;
+
+	char *buffer;
+	pContext->LocalToString( params[ 2 ], &buffer );
+
+	if ( !pReq->GetResponseBody( (uint8 *)buffer, params[ 3 ] ) )
+		return pContext->ThrowNativeError( "Unable to get HTTP response body" );
+
+	return 0;
+}
+
 
 sp_nativeinfo_t g_HttpNatives[] =
 {
 	{ "SteamAPI_CreateHttpRequest", Native_CreateHttpRequest },
 	{ "SteamAPI_SendHttpRequest", Native_SendHttpRequest },
+
+	{ "SteamAPI_GetHttpResponseBodySize", Native_GetHttpResponseBodySize },
+	{ "SteamAPI_GetHttpResponseBody", Native_GetHttpResponseBody },
+
 	{ NULL, NULL },
 };

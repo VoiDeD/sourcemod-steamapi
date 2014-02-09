@@ -12,6 +12,9 @@
 *.la
 *.a
 
+# misc visualstudio files
+~AutoRecover.*
+
 # Extension build dirs
 [Dd]ebug*/
 [Rr]ealse*/

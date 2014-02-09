@@ -82,6 +82,9 @@ funcenum HttpReqCompletedCallback
 native Handle:SteamAPI_CreateHttpRequest( const String:url[], HTTPMethod:method = HTTPMethod_GET, any:context = 0 );
 native bool:SteamAPI_SendHttpRequest( Handle:httpRequest, HttpReqCompletedCallback:callback );
 
+native SteamAPI_GetHttpResponseBodySize( Handle:httpRequest );
+native SteamAPI_GetHttpResponseBody( Handle:httpRequest, String:buffer[], maxBuffer );
+
 forward SteamAPI_RestartRequested();
 
 
