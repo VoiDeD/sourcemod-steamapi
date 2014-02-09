@@ -96,6 +96,8 @@ native SteamAPI_SetGameDescription( const String:gameDesc[] );
 
 native SteamAPI_GetClientSteamID( client, String:buffer[], maxBuffer );
 
+native EUserHasLicenseForAppResult:SteamAPI_UserHasLicenseForApp( client, nAppId );
+
 
 funcenum HttpReqCompletedCallback
 {
@@ -156,6 +158,7 @@ public __ext_steamapi_SetNTVOptional()
 {
 	MarkNativeAsOptional( "SteamAPI_SetGameDescription" );
 	MarkNativeAsOptional( "SteamAPI_GetClientSteamID" );
+	MarkNativeAsOptional( "SteamAPI_UserHasLicenseForApp" );
 
 	MarkNativeAsOptional( "SteamAPI_CreateHttpRequest" );
 	MarkNativeAsOptional( "SteamAPI_SendHttpRequest" );

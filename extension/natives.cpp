@@ -40,10 +40,30 @@ static cell_t Native_GetClientSteamID( IPluginContext *pContext, const cell_t *p
 	return numBytes;
 }
 
+static cell_t Native_UserHasLicenseForApp( IPluginContext *pContext, const cell_t *params )
+{
+	ISteamGameServer *pGameServer = g_APIContext.SteamGameServer();
+
+	if ( !pGameServer )
+	{
+		return pContext->ThrowNativeError( "SteamAPI not initialized!" );
+	}
+
+	const CSteamID *pSteamID = engine->GetClientSteamIDByPlayerIndex( params[ 1 ] );
+
+	if ( !pSteamID )
+	{
+		return pContext->ThrowNativeError( "Invalid or unconnected player!" );
+	}
+
+	return pGameServer->UserHasLicenseForApp( *pSteamID, params[ 2 ]);
+}
+
 
 sp_nativeinfo_t g_Natives[] =
 {
 	{ "SteamAPI_SetGameDescription", Native_SetGameDescription },
 	{ "SteamAPI_GetClientSteamID", Native_GetClientSteamID },
+	{ "SteamAPI_UserHasLicenseForApp", Native_UserHasLicenseForApp },
 	{ NULL, NULL }
 };
