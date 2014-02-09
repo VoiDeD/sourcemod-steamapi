@@ -105,7 +105,7 @@ funcenum HttpReqCompletedCallback
 	public( Handle:httpRequest, bool:bRequestSuccessful, HTTPStatusCode:statusCode, any:context ),
 };
 
-native Handle:SteamAPI_CreateHttpRequest( const String:url[], HTTPMethod:method = k_EHTTPMethodGET, any:context = 0 );
+native Handle:SteamAPI_CreateHttpRequest( const String:url[], EHTTPMethod:method = k_EHTTPMethodGET, any:context = 0 );
 native bool:SteamAPI_SendHttpRequest( Handle:httpRequest, HttpReqCompletedCallback:callback );
 
 native SteamAPI_GetHttpResponseBodySize( Handle:httpRequest );
