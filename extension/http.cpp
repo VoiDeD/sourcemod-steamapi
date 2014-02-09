@@ -151,7 +151,7 @@ void CHttpRequest::OnHttpRequestCompleted( HTTPRequestCompleted_t *pResult, bool
 	m_pPluginCallback->PushCell( m_PluginHandle );
 	m_pPluginCallback->PushCell( pResult->m_bRequestSuccessful );
 	m_pPluginCallback->PushCell( pResult->m_eStatusCode );
-	m_pPluginCallback->PushCell( pResult->m_ulContextValue );
+	m_pPluginCallback->PushCell( static_cast<cell_t>( pResult->m_ulContextValue ) );
 
 	m_pPluginCallback->Execute( NULL );
 }
@@ -184,11 +184,11 @@ void CSteamAPI::ShutdownHttp()
 
 void CSteamAPI::OnHandleDestroy( HandleType_t type, void *object )
 {
-	if ( type != m_RequestHandleType )
-		return;
-
-	CHttpRequest *pReq = reinterpret_cast<CHttpRequest *>( object );
-	delete pReq;
+	if ( type == GetHttpHandleType() )
+	{
+		CHttpRequest *pReq = reinterpret_cast<CHttpRequest *>( object );
+		delete pReq;
+	}
 }
 
 static cell_t Native_CreateHttpRequest( IPluginContext *pContext, const cell_t *params )
@@ -266,7 +266,7 @@ static cell_t Native_GetHttpResponseBody( IPluginContext *pContext, const cell_t
 	char *buffer;
 	pContext->LocalToString( params[ 2 ], &buffer );
 
-	if ( !pReq->GetResponseBody( (uint8 *)buffer, params[ 3 ] ) )
+	if ( !pReq->GetResponseBody( reinterpret_cast<uint8 *>( buffer ), params[ 3 ] ) )
 		return pContext->ThrowNativeError( "Unable to get HTTP response body" );
 
 	return 0;
