@@ -133,7 +133,7 @@ stock SteamAPI_GetClientByAccountID( accountId, bool:validate = true )
 }
 
 
-public Extension:__ext__steamapi =
+public Extension:__ext_steamapi =
 {
 	name = "SteamAPI",
 	file = "steamapi.ext",
